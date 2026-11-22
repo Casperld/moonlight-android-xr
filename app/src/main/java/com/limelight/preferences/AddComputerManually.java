@@ -18,6 +18,7 @@ import com.limelight.R;
 import com.limelight.nvstream.http.ComputerDetails;
 import com.limelight.nvstream.http.NvHTTP;
 import com.limelight.nvstream.jni.MoonBridge;
+import com.limelight.nvstream.usb.UsbLink;
 import com.limelight.utils.Dialog;
 import com.limelight.utils.ServerHelper;
 import com.limelight.utils.SpinnerDialog;
@@ -132,10 +133,22 @@ public class AddComputerManually extends Activity {
         try {
             ComputerDetails details = new ComputerDetails();
 
+            // With the USB cable link up, a link-local address like the one
+            // ipconfig shows for the PC's USB adapter (fe80::1%12) means the PC
+            // on the cable. Windows' own %12 means nothing here and a URI cannot
+            // hold it, so it goes, and the cable's scope goes on after parsing.
+            if (UsbLink.isUp() && rawUserInput.indexOf('%') > 0) {
+                rawUserInput = rawUserInput.replaceAll("%[0-9A-Za-z_.]+", "");
+            }
+
             // Check if we parsed a host address successfully
             URI uri = parseRawUserInputToUri(rawUserInput);
             if (uri != null && uri.getHost() != null && !uri.getHost().isEmpty()) {
                 String host = uri.getHost();
+                if (host.startsWith("[") && host.endsWith("]")) {
+                    host = host.substring(1, host.length() - 1);
+                }
+                host = UsbLink.scopeIfLinkLocal(host);
                 int port = uri.getPort();
 
                 // If a port was not specified, use the default

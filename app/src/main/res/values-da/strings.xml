@@ -234,6 +234,8 @@
     <string name="summary_checkbox_host_audio">Afspil lyd fra computeren og denne enhed</string>
     <string name="title_checkbox_auto_launch_desktop">Åbn Desktop automatisk</string>
     <string name="summary_checkbox_auto_launch_desktop">Når der trykkes på en pc, startes dens app med navnet Desktop uden at vise applisten, hvis værten har en</string>
+    <string name="title_checkbox_usb_wired">Kablet USB-streaming</string>
+    <string name="summary_checkbox_usb_wired">Stream via et USB-C-kabel til pc\'en i stedet for wifi. Sunshine skal være sat til IPv4 + IPv6</string>
 
     <string name="category_advanced_settings">Avancerede indstillinger</string>
     <string name="title_unlock_fps">Lås alle mulige billedfrekvenser op</string>

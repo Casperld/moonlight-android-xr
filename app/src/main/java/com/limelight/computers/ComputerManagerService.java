@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,6 +24,7 @@ import com.limelight.nvstream.http.NvHTTP;
 import com.limelight.nvstream.http.PairingManager;
 import com.limelight.nvstream.mdns.MdnsComputer;
 import com.limelight.nvstream.mdns.MdnsDiscoveryListener;
+import com.limelight.nvstream.usb.UsbLink;
 import com.limelight.utils.CacheHelper;
 import com.limelight.utils.NetHelper;
 import com.limelight.utils.ServerHelper;
@@ -63,6 +65,26 @@ public class ComputerManagerService extends Service {
     private final AtomicInteger activePolls = new AtomicInteger(0);
     private boolean pollingActive = false;
     private final Lock defaultNetworkLock = new ReentrantLock();
+
+    // Each PC's address on the USB cable link, by UUID, while the cable is in.
+    // Polled ahead of every other address so a PC reachable both ways streams
+    // over the cable. Not saved: the address only means anything while the
+    // link is up.
+    private final ConcurrentHashMap<String, ComputerDetails.AddressTuple> usbAddresses = new ConcurrentHashMap<>();
+
+    private final UsbLink.Listener usbListener = new UsbLink.Listener() {
+        @Override
+        public void onUsbHostFound(final String scopedAddress) {
+            Thread t = new Thread(() -> handleUsbHost(scopedAddress), "USB host poll");
+            t.setDaemon(true);
+            t.start();
+        }
+
+        @Override
+        public void onUsbLinkLost() {
+            usbAddresses.clear();
+        }
+    };
 
     private ConnectivityManager.NetworkCallback networkCallback;
 
@@ -204,6 +226,9 @@ public class ComputerManagerService extends Service {
             // Start mDNS autodiscovery too
             discoveryBinder.startDiscovery(MDNS_QUERY_PERIOD_MS);
 
+            // And hear about PCs on the USB cable, if wired streaming is on
+            UsbLink.addListener(usbListener);
+
             synchronized (pollingTuples) {
                 for (PollingTuple tuple : pollingTuples) {
                     // Enforce the poll data TTL
@@ -311,6 +336,8 @@ public class ComputerManagerService extends Service {
             // Stop mDNS autodiscovery
             discoveryBinder.stopDiscovery();
         }
+
+        UsbLink.removeListener(usbListener);
 
         // Stop polling
         pollingActive = false;
@@ -624,7 +651,57 @@ public class ComputerManagerService extends Service {
         tuple.pollingThread.start();
     }
 
+    // A PC answered on the USB link. Find out which one it is, remember the
+    // address for it, and add it if we have never seen it before.
+    private void handleUsbHost(String scopedAddress) {
+        ComputerDetails.AddressTuple address =
+                new ComputerDetails.AddressTuple(scopedAddress, NvHTTP.DEFAULT_HTTP_PORT);
+        ComputerDetails polled = tryPollIp(new ComputerDetails(), address);
+        if (polled == null) {
+            LimeLog.warning("USB link: " + scopedAddress + " did not answer serverinfo."
+                    + " Is Sunshine set to IPv4 + IPv6?");
+            return;
+        }
+        if (!UsbLink.isUsbAddress(scopedAddress)) {
+            // The cable came out while we asked
+            return;
+        }
+
+        usbAddresses.put(polled.uuid, address);
+        LimeLog.info("USB link: " + polled.name + " is reachable over the cable");
+
+        boolean known = false;
+        synchronized (pollingTuples) {
+            for (PollingTuple tuple : pollingTuples) {
+                if (polled.uuid.equals(tuple.computer.uuid)) {
+                    known = true;
+                    break;
+                }
+            }
+        }
+        if (known) {
+            // Its next poll goes over the cable
+            return;
+        }
+
+        ComputerDetails details = new ComputerDetails();
+        details.manualAddress = address;
+        try {
+            if (!addComputerBlocking(details)) {
+                LimeLog.warning("USB link: could not add " + scopedAddress);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     private ComputerDetails parallelPollPc(ComputerDetails details) throws InterruptedException {
+        ComputerDetails.AddressTuple usbAddress = details.uuid != null ? usbAddresses.get(details.uuid) : null;
+        if (usbAddress != null && !UsbLink.isUsbAddress(usbAddress.address)) {
+            usbAddresses.remove(details.uuid, usbAddress);
+            usbAddress = null;
+        }
+        ParallelPollTuple usbInfo = new ParallelPollTuple(usbAddress, details);
         ParallelPollTuple localInfo = new ParallelPollTuple(details.localAddress, details);
         ParallelPollTuple manualInfo = new ParallelPollTuple(details.manualAddress, details);
         ParallelPollTuple remoteInfo = new ParallelPollTuple(details.remoteAddress, details);
@@ -633,13 +710,26 @@ public class ComputerManagerService extends Service {
         // These must be started in order of precedence for the deduplication algorithm
         // to result in the correct behavior.
         HashSet<ComputerDetails.AddressTuple> uniqueAddresses = new HashSet<>();
+        startParallelPollThread(usbInfo, uniqueAddresses);
         startParallelPollThread(localInfo, uniqueAddresses);
         startParallelPollThread(manualInfo, uniqueAddresses);
         startParallelPollThread(remoteInfo, uniqueAddresses);
         startParallelPollThread(ipv6Info, uniqueAddresses);
 
         try {
-            // Check local first
+            // The USB cable beats everything
+            synchronized (usbInfo) {
+                while (!usbInfo.complete) {
+                    usbInfo.wait();
+                }
+
+                if (usbInfo.returnedDetails != null) {
+                    usbInfo.returnedDetails.activeAddress = usbInfo.address;
+                    return usbInfo.returnedDetails;
+                }
+            }
+
+            // Then local
             synchronized (localInfo) {
                 while (!localInfo.complete) {
                     localInfo.wait();
@@ -689,6 +779,7 @@ public class ComputerManagerService extends Service {
         } finally {
             // Stop any further polling if we've found a working address or we've been
             // interrupted by an attempt to stop polling.
+            usbInfo.interrupt();
             localInfo.interrupt();
             manualInfo.interrupt();
             remoteInfo.interrupt();

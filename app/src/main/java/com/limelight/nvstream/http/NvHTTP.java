@@ -1,5 +1,6 @@
 package com.limelight.nvstream.http;
 
+import android.net.Network;
 import android.os.Build;
 
 import java.io.FileNotFoundException;
@@ -12,6 +13,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -22,7 +24,9 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 import java.util.UUID;
@@ -51,8 +55,10 @@ import com.limelight.LimeLog;
 import com.limelight.nvstream.ConnectionContext;
 import com.limelight.nvstream.http.PairingManager.PairState;
 import com.limelight.nvstream.jni.MoonBridge;
+import com.limelight.nvstream.usb.UsbLink;
 
 import okhttp3.ConnectionPool;
+import okhttp3.Dns;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -190,6 +196,36 @@ public class NvHTTP {
                 .build();
     }
 
+    // Stands in for a scoped IPv6 address in URLs, see useScopedAddress().
+    // .invalid can never resolve anywhere else.
+    private static final String USB_PLACEHOLDER_HOST = "usb-link.moonlight.invalid";
+
+    private void useScopedAddress(final InetAddress scoped) {
+        final List<InetAddress> resolved = Collections.singletonList(scoped);
+        Dns dns = new Dns() {
+            @Override
+            public List<InetAddress> lookup(String hostname) throws UnknownHostException {
+                if (USB_PLACEHOLDER_HOST.equals(hostname)) {
+                    return resolved;
+                }
+                return Dns.SYSTEM.lookup(hostname);
+            }
+        };
+
+        Network usbNetwork = UsbLink.getNetwork();
+        httpClientLongConnectTimeout = withScopedAddress(httpClientLongConnectTimeout, dns, usbNetwork);
+        httpClientShortConnectTimeout = withScopedAddress(httpClientShortConnectTimeout, dns, usbNetwork);
+        httpClientLongConnectNoReadTimeout = withScopedAddress(httpClientLongConnectNoReadTimeout, dns, usbNetwork);
+    }
+
+    private static OkHttpClient withScopedAddress(OkHttpClient client, Dns dns, Network usbNetwork) {
+        OkHttpClient.Builder builder = client.newBuilder().dns(dns);
+        if (usbNetwork != null) {
+            builder.socketFactory(usbNetwork.getSocketFactory());
+        }
+        return builder.build();
+    }
+
     public HttpUrl getHttpsUrl(boolean likelyOnline) throws IOException {
         if (httpsPort == 0) {
             // Fetch the HTTPS port if we don't have it already
@@ -217,7 +253,15 @@ public class NvHTTP {
             // for what OkHTTP thinks is an IPv6 address. Normalize it into IPv4 form
             // to avoid triggering this bug.
             String addressString = address.address;
-            if (addressString.contains(":") && addressString.contains(".")) {
+            if (UsbLink.isScopedAddress(addressString)) {
+                // An address on the USB cable link, like fe80::1%ncm0. A URL
+                // cannot carry the scope, so the URL names a placeholder host
+                // that our own Dns turns into the scoped address, and the
+                // sockets are made on the USB network.
+                useScopedAddress(UsbLink.resolve(addressString));
+                addressString = USB_PLACEHOLDER_HOST;
+            }
+            else if (addressString.contains(":") && addressString.contains(".")) {
                 InetAddress addr = InetAddress.getByName(addressString);
                 if (addr instanceof Inet4Address) {
                     addressString = ((Inet4Address)addr).getHostAddress();

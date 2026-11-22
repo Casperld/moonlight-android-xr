@@ -281,6 +281,8 @@
     <string name="summary_show_guide_button">Guide düğmesini ekranda gösterir</string>
     <string name="title_checkbox_auto_launch_desktop">Desktop\'u otomatik aç</string>
     <string name="summary_checkbox_auto_launch_desktop">Bir bilgisayara dokunulduğunda, uygulama listesini göstermeden Desktop adlı uygulamasını başlatır (ana bilgisayarda varsa)</string>
+    <string name="title_checkbox_usb_wired">Kablolu USB akışı</string>
+    <string name="summary_checkbox_usb_wired">Wi-Fi yerine bilgisayara bağlı bir USB-C kablosu üzerinden yayın yap. Sunshine IPv4 + IPv6 olarak ayarlanmalı</string>
     <string name="title_settings_back">Geri</string>
     <string name="summary_settings_back">Bilgisayar listesine dön</string>
     <string name="category_vr_settings">VR ayarları</string>

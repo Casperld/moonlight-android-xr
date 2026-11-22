@@ -295,6 +295,8 @@
     <string name="summary_show_guide_button">Die Guide-Taste auf dem Bildschirm anzeigen</string>
     <string name="title_checkbox_auto_launch_desktop">Desktop automatisch öffnen</string>
     <string name="summary_checkbox_auto_launch_desktop">Beim Antippen eines PCs dessen App namens Desktop starten, ohne die App-Liste anzuzeigen, sofern der Host eine hat</string>
+    <string name="title_checkbox_usb_wired">Kabelgebundenes USB-Streaming</string>
+    <string name="summary_checkbox_usb_wired">Über ein USB-C-Kabel zum PC statt über WLAN streamen. Sunshine muss auf IPv4 + IPv6 eingestellt sein</string>
     <string name="title_settings_back">Zurück</string>
     <string name="summary_settings_back">Zurück zur Computerliste</string>
     <string name="category_vr_settings">VR-Einstellungen</string>

@@ -239,6 +239,8 @@
     <string name="summary_checkbox_host_audio">Play audio from the computer and this device</string>
     <string name="title_checkbox_auto_launch_desktop">Open Desktop automatically</string>
     <string name="summary_checkbox_auto_launch_desktop">When a PC is tapped, start its app named Desktop without showing the app list, if the host has one</string>
+    <string name="title_checkbox_usb_wired">Wired USB streaming</string>
+    <string name="summary_checkbox_usb_wired">Stream over a USB-C cable to the PC instead of Wi-Fi. Sunshine has to be set to IPv4 + IPv6</string>
 
     <string name="category_advanced_settings">Advanced Settings</string>
     <string name="title_unlock_fps">Unlock all possible frame rates</string>

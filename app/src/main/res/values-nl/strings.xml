@@ -281,6 +281,8 @@
     <string name="summary_show_guide_button">De Guide-knop op het scherm tonen</string>
     <string name="title_checkbox_auto_launch_desktop">Desktop automatisch openen</string>
     <string name="summary_checkbox_auto_launch_desktop">Wanneer op een pc wordt getikt, de app met de naam Desktop starten zonder de app-lijst te tonen, als de host er een heeft</string>
+    <string name="title_checkbox_usb_wired">Bekabeld streamen via USB</string>
+    <string name="summary_checkbox_usb_wired">Stream via een USB-C-kabel naar de pc in plaats van wifi. Sunshine moet op IPv4 + IPv6 staan</string>
     <string name="title_settings_back">Terug</string>
     <string name="summary_settings_back">Terug naar de computerlijst</string>
     <string name="category_vr_settings">VR-instellingen</string>

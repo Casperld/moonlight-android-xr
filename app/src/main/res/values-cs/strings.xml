@@ -275,6 +275,8 @@
     <string name="summary_show_guide_button">Zobrazí tlačítko Guide na obrazovce</string>
     <string name="title_checkbox_auto_launch_desktop">Automaticky otevřít Desktop</string>
     <string name="summary_checkbox_auto_launch_desktop">Po klepnutí na PC spustí jeho aplikaci s názvem Desktop bez zobrazení seznamu aplikací, pokud ji hostitel má</string>
+    <string name="title_checkbox_usb_wired">Streamování po kabelu USB</string>
+    <string name="summary_checkbox_usb_wired">Streamovat přes kabel USB-C do počítače místo Wi-Fi. Sunshine musí být nastaven na IPv4 + IPv6</string>
     <string name="title_full_range">Vynutit plný rozsah videa (experimentální)</string>
     <string name="summary_full_range">Pokud vaše zařízení neumí správně zobrazit video v plném rozsahu, dojde ke ztrátě detailů ve světlých a tmavých oblastech.</string>
     <string name="title_settings_back">Zpět</string>

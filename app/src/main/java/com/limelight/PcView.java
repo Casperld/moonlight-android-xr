@@ -15,6 +15,7 @@ import com.limelight.nvstream.http.NvApp;
 import com.limelight.nvstream.http.NvHTTP;
 import com.limelight.nvstream.http.PairingManager;
 import com.limelight.nvstream.http.PairingManager.PairState;
+import com.limelight.nvstream.usb.UsbLink;
 import com.limelight.nvstream.wol.WakeOnLanSender;
 import com.limelight.preferences.AddComputerManually;
 import com.limelight.preferences.GlPreferences;
@@ -357,6 +358,17 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
         UiHelper.showDecoderCrashDialog(this);
 
         inForeground = true;
+
+        // Wired streaming over the USB-C cable. Asked for here because the
+        // system only shows its approval dialog to an app in the foreground.
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                PreferenceConfiguration.USB_WIRED_PREF_STRING, PreferenceConfiguration.DEFAULT_USB_WIRED)) {
+            UsbLink.start(this);
+        }
+        else {
+            UsbLink.stop();
+        }
+
         startComputerUpdates();
 
         // The setting may have changed meanwhile. The check itself runs once a

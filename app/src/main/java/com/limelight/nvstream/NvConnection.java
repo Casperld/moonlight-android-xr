@@ -39,6 +39,7 @@ import com.limelight.nvstream.http.NvHTTP;
 import com.limelight.nvstream.http.PairingManager;
 import com.limelight.nvstream.input.MouseButtonPacket;
 import com.limelight.nvstream.jni.MoonBridge;
+import com.limelight.nvstream.usb.UsbLink;
 
 public class NvConnection {
     // Context parameters
@@ -48,6 +49,7 @@ public class NvConnection {
     private static Semaphore connectionAllowed = new Semaphore(1);
     private final boolean isMonkey;
     private final Context appContext;
+    private volatile boolean usbBound;
 
     public NvConnection(Context appContext, ComputerDetails.AddressTuple host, int httpsPort, String uniqueId, StreamConfiguration config, LimelightCryptoProvider cryptoProvider, X509Certificate serverCert)
     {
@@ -99,11 +101,20 @@ public class NvConnection {
 
         // Now a pending connection can be processed
         connectionAllowed.release();
+
+        // A stream over the USB cable bound the whole process to it, give
+        // the rest of the app its normal networks back
+        if (usbBound) {
+            UsbLink.unbindProcess();
+            usbBound = false;
+        }
     }
 
     private InetAddress resolveServerAddress() throws IOException {
         // Try to find an address that works for this host
-        InetAddress[] addrs = InetAddress.getAllByName(context.serverAddress.address);
+        InetAddress[] addrs = UsbLink.isScopedAddress(context.serverAddress.address) ?
+                new InetAddress[] { UsbLink.resolve(context.serverAddress.address) } :
+                InetAddress.getAllByName(context.serverAddress.address);
         for (InetAddress addr : addrs) {
             try (Socket s = new Socket()) {
                 s.setSoLinger(true, 0);
@@ -125,6 +136,12 @@ public class NvConnection {
     }
 
     private int detectServerConnectionType() {
+        // The USB cable is as local as it gets, and the active network checks
+        // below would look at Wi-Fi instead
+        if (UsbLink.isUsbAddress(context.serverAddress.address)) {
+            return StreamConfiguration.STREAM_CFG_LOCAL;
+        }
+
         ConnectivityManager connMgr = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Network activeNetwork = connMgr.getActiveNetwork();
@@ -387,6 +404,13 @@ public class NvConnection {
                 context.videoCapabilities = videoDecoderRenderer.getCapabilities();
 
                 String appName = context.streamConfig.getApp().getAppName();
+
+                // A host on the USB cable link: send everything, the native
+                // core's sockets included, over the cable rather than Wi-Fi
+                if (!usbBound && UsbLink.isUsbAddress(context.serverAddress.address)) {
+                    usbBound = UsbLink.bindProcess();
+                    LimeLog.info("Streaming over the USB cable" + (usbBound ? "" : ", but binding to it failed"));
+                }
 
                 context.connListener.stageStarting(appName);
 

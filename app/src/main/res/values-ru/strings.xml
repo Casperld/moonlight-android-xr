@@ -288,6 +288,8 @@
     <string name="summary_show_guide_button">Показывать кнопку Guide на экране</string>
     <string name="title_checkbox_auto_launch_desktop">Открывать Desktop автоматически</string>
     <string name="summary_checkbox_auto_launch_desktop">При нажатии на компьютер запускать его приложение с именем Desktop, не показывая список приложений, если оно есть на хосте</string>
+    <string name="title_checkbox_usb_wired">Проводная трансляция по USB</string>
+    <string name="summary_checkbox_usb_wired">Передавать поток по кабелю USB-C к ПК вместо Wi-Fi. В Sunshine должен быть выбран режим IPv4 + IPv6</string>
     <string name="title_settings_back">Назад</string>
     <string name="summary_settings_back">Вернуться к списку компьютеров</string>
     <string name="category_vr_settings">Настройки VR</string>

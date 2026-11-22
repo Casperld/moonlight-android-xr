@@ -296,6 +296,8 @@
     <string name="summary_show_guide_button">화면에 가이드 버튼을 표시합니다</string>
     <string name="title_checkbox_auto_launch_desktop">Desktop 자동으로 열기</string>
     <string name="summary_checkbox_auto_launch_desktop">PC를 누르면 앱 목록을 표시하지 않고 Desktop이라는 앱을 바로 시작합니다(호스트에 있는 경우)</string>
+    <string name="title_checkbox_usb_wired">USB 유선 스트리밍</string>
+    <string name="summary_checkbox_usb_wired">Wi-Fi 대신 PC에 연결한 USB-C 케이블로 스트리밍합니다. Sunshine을 IPv4 + IPv6으로 설정해야 합니다</string>
     <string name="title_settings_back">뒤로</string>
     <string name="summary_settings_back">컴퓨터 목록으로 돌아갑니다</string>
     <string name="category_vr_settings">VR 설정</string>

@@ -281,6 +281,8 @@
     <string name="summary_show_guide_button">Pokazuje przycisk Guide na ekranie</string>
     <string name="title_checkbox_auto_launch_desktop">Automatycznie otwieraj Desktop</string>
     <string name="summary_checkbox_auto_launch_desktop">Po dotknięciu komputera uruchamia jego aplikację o nazwie Desktop bez pokazywania listy aplikacji, jeśli host ją ma</string>
+    <string name="title_checkbox_usb_wired">Strumieniowanie przez kabel USB</string>
+    <string name="summary_checkbox_usb_wired">Przesyłaj obraz kablem USB-C do komputera zamiast przez Wi-Fi. Sunshine musi być ustawiony na IPv4 + IPv6</string>
     <string name="title_settings_back">Wstecz</string>
     <string name="summary_settings_back">Powrót do listy komputerów</string>
     <string name="category_vr_settings">Ustawienia VR</string>

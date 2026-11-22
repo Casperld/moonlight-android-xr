@@ -281,6 +281,8 @@
     <string name="summary_show_guide_button">Visa Guide-knappen på skärmen</string>
     <string name="title_checkbox_auto_launch_desktop">Öppna Desktop automatiskt</string>
     <string name="summary_checkbox_auto_launch_desktop">När du trycker på en dator startas dess app som heter Desktop utan att applistan visas, om värden har en sådan</string>
+    <string name="title_checkbox_usb_wired">Trådbunden USB-strömning</string>
+    <string name="summary_checkbox_usb_wired">Strömma via en USB-C-kabel till datorn i stället för wifi. Sunshine måste vara inställt på IPv4 + IPv6</string>
     <string name="title_settings_back">Tillbaka</string>
     <string name="summary_settings_back">Tillbaka till datorlistan</string>
     <string name="category_vr_settings">VR-inställningar</string>

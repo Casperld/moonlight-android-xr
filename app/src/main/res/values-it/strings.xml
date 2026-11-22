@@ -297,6 +297,8 @@
     <string name="summary_show_guide_button">Mostra il pulsante Guida sullo schermo</string>
     <string name="title_checkbox_auto_launch_desktop">Apri Desktop automaticamente</string>
     <string name="summary_checkbox_auto_launch_desktop">Quando tocchi un PC, avvia la sua app chiamata Desktop senza mostrare l\'elenco delle app, se l\'host ne ha una</string>
+    <string name="title_checkbox_usb_wired">Streaming via cavo USB</string>
+    <string name="summary_checkbox_usb_wired">Trasmetti tramite un cavo USB-C collegato al PC invece del Wi-Fi. Sunshine deve essere impostato su IPv4 + IPv6</string>
     <string name="title_settings_back">Indietro</string>
     <string name="summary_settings_back">Torna all\'elenco dei computer</string>
     <string name="category_vr_settings">Impostazioni VR</string>

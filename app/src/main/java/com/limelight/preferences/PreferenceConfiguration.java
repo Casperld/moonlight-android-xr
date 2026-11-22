@@ -36,6 +36,7 @@ public class PreferenceConfiguration {
     private static final String BITRATE_PREF_OLD_STRING = "seekbar_bitrate";
     private static final String STRETCH_PREF_STRING = "checkbox_stretch_video";
     private static final String SOPS_PREF_STRING = "checkbox_enable_sops";
+    public static final String USB_WIRED_PREF_STRING = "checkbox_usb_wired";
     private static final String DISABLE_TOASTS_PREF_STRING = "checkbox_disable_warnings";
     private static final String HOST_AUDIO_PREF_STRING = "checkbox_host_audio";
     static final String AUTO_DESKTOP_PREF_STRING = "checkbox_auto_launch_desktop";
@@ -187,6 +188,7 @@ public class PreferenceConfiguration {
 
     private static final boolean DEFAULT_STRETCH = false;
     private static final boolean DEFAULT_SOPS = true;
+    public static final boolean DEFAULT_USB_WIRED = false;
     private static final boolean DEFAULT_DISABLE_TOASTS = false;
     private static final boolean DEFAULT_HOST_AUDIO = false;
     static final boolean DEFAULT_AUTO_DESKTOP = false;

@@ -244,6 +244,8 @@
     <string name="summary_show_guide_button">Vis Guide-knappen på skjermen</string>
     <string name="title_checkbox_auto_launch_desktop">Åpne Desktop automatisk</string>
     <string name="summary_checkbox_auto_launch_desktop">Når du trykker på en PC, startes appen dens som heter Desktop uten å vise applisten, hvis verten har en</string>
+    <string name="title_checkbox_usb_wired">Kablet USB-strømming</string>
+    <string name="summary_checkbox_usb_wired">Strøm via en USB-C-kabel til PC-en i stedet for wifi. Sunshine må være satt til IPv4 + IPv6</string>
     <string name="title_checkbox_reduce_refresh_rate">Tillat lavere oppdateringsfrekvens</string>
     <string name="summary_checkbox_reduce_refresh_rate">Lavere oppdateringsfrekvens på skjermen kan spare strøm mot litt ekstra videoforsinkelse</string>
     <string name="title_full_range">Tving video med fullt område (eksperimentell)</string>

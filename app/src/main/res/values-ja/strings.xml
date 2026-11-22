@@ -245,6 +245,8 @@
     <string name="summary_checkbox_enable_pip">マルチタスク中もストリームを表示できます (操作はできません)</string>
     <string name="title_checkbox_auto_launch_desktop">Desktopを自動で開く</string>
     <string name="summary_checkbox_auto_launch_desktop">PCをタップしたとき、ホストにDesktopという名前のアプリがあれば、アプリ一覧を表示せずにそれを起動します</string>
+    <string name="title_checkbox_usb_wired">USB有線ストリーミング</string>
+    <string name="summary_checkbox_usb_wired">Wi-Fiの代わりにPCとつないだUSB-Cケーブルでストリーミングします。SunshineをIPv4 + IPv6に設定する必要があります</string>
     <string name="title_unlock_fps">すべてのフレームレートを解除</string>
     <string name="summary_unlock_fps">90または120 FPSでのストリーミングは高性能なデバイスでは遅延を減らせますが、対応していないデバイスではラグや不安定の原因になります</string>
     <string name="title_checkbox_reduce_refresh_rate">リフレッシュレートの低下を許可</string>

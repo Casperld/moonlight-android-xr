@@ -234,6 +234,8 @@
     <string name="summary_checkbox_host_audio">Toista ääni tietokoneella ja tällä laitteella</string>
     <string name="title_checkbox_auto_launch_desktop">Avaa Desktop automaattisesti</string>
     <string name="summary_checkbox_auto_launch_desktop">Kun tietokonetta napautetaan, käynnistetään sen Desktop-niminen sovellus näyttämättä sovellusluetteloa, jos isännällä on sellainen</string>
+    <string name="title_checkbox_usb_wired">Langallinen USB-suoratoisto</string>
+    <string name="summary_checkbox_usb_wired">Suoratoista USB-C-kaapelilla tietokoneeseen Wi-Fin sijaan. Sunshinen on oltava asetettu tilaan IPv4 + IPv6</string>
 
     <string name="category_advanced_settings">Lisäasetukset</string>
     <string name="title_unlock_fps">Avaa kaikki mahdolliset kuvataajuudet</string>
